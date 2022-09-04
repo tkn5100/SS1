@@ -7,7 +7,7 @@ def sigmoid(x):
     return f
 
 # 画像ファイルの読み込み
-img = cv2.imread("zebra.jpg")
+img = cv2.imread("16-16px.jpg")
 img_array = np.asarray(img)
 
 # hsv形式に変換
