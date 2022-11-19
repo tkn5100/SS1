@@ -7,7 +7,7 @@ v_1 = [[],[]] #かくれ層1層目のベクトル
 t = {'0': 0, '1': 10, '2': 20, '3': 30, '4': 40, '5': 50, '6': 60, '7': 70, '8': 80, '9': 90}
 
 def sigmoid(x):
-    f = 1 / (1 + np.exp(-x))
+    f = 1 / (1 + np.exp(-1 * x))
     return f
 
 img = cv2.imread(str("0.png"))
@@ -28,15 +28,14 @@ y = handle()
 
 #誤差逆伝播法
 def error_backpropagation(num,answer):
-    d = [] #微分したやつ
-    d.append((y - t[answer]) * (1 - y) * y * x[num]) #xの1個目について...
+    d = ((y - t[answer]) * (1 - y) * y * x[num]) #xの1個目について...
     g = 1 #ゲイン
-    weight[0][num] = weight[0][num] - (g * d[0])
+    return weight[0][num] - (g * d)
 
 #w_1について誤差逆伝播法してみる
 for i in range(2):
     print('y:' + str(y))
-    error_backpropagation(0,'0')
+    weight[0][0] = error_backpropagation(0,'0')
     print('weight:' + str(weight[0][0]))
     y = handle()
 input()
