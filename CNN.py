@@ -42,14 +42,16 @@ def softmax(array, numerator): #numeratorは分子という意味。求めたい
     # print("f: " + str(f))
     return f
 
+#畳み込み層
 def convolution(input, filter):
-    value = [] #フィルターかけたやつ(一時的なもの)
+    value = [] #フィルターかけたやつ(一時的な変数)
     for i_0 in range(len(input) - 2):
         value.append([])
         for i_1 in range(len(input[i_0]) - 2):
             value[i_0].append(np.array([input[i_0][i_1:i_1 + 3], input[i_0 + 1][i_1:i_1 + 3], input[i_0 + 2][i_1:i_1 + 3]]) * filter)
     return np.array(value).sum(axis=3).sum(axis=2)
 
+#プーリング層
 def pooling(input):
     value = [] #2x2ずつ抽出(一時的なもの)
     for i_0 in range(len(input)):
@@ -70,6 +72,7 @@ def pooling(input):
 
     return np.array(value).max(axis=3).max(axis=2)
 
+#確率算出
 def probability(array, num):
     return np.round(softmax(array, num), decimals=3) * 100
 
@@ -79,11 +82,12 @@ def error_backpropagation(num,weight_i):
     g = -0.0001 #ゲイン
     return round(weight[num][weight_i] - (g * d))
 
+#メイン処理の定義
 def handle(file_name, show): #showが1なら確率計算
     print("\rnow learning(" + str(file_name) + ".png)...", end="")
     #目標値設定
     for i in range(10):
-        t[str(i)] = 5 #sigmoid(0)=5より下限が5
+        t[str(i)] = 1 #シグモイド関数を通した後なので0とか10にすると収束しない
     t[str(list(file_name)[0])] = 9
 
     img = cv2.imread(str(file_name) + ".png")
@@ -143,7 +147,10 @@ def handle(file_name, show): #showが1なら確率計算
         print("\n---------------------------------------------------------\n")
     return u_6, u_7
 
-for loop in range(20):
+loop_times = int(input("学習回数を入力："))
+loop_count = 1
+for loop in range(loop_times):
+    print("\n" + str(loop_count) + "/" + str(loop_times) + ":")
     for index in range(10):
         for index_1 in range(6): #indexとindex_1でファイル名指定
             u_6, u_7 = handle(str(index) + "_" + str(index_1), 0)
@@ -151,9 +158,10 @@ for loop in range(20):
             for i in range(len(weight)):
                 for i_1 in range(len(weight[i])):
                     weight[i][i_1] = error_backpropagation(i,i_1)
-            # print(weight)
+    loop_count = loop_count + 1
+    print("\rfinished                  ", end="")
 
-# handle("5_0", 1)
+print()
 print(weight)
 
 input("Enterを押して終了")
